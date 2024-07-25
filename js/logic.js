@@ -6,6 +6,8 @@ const noteList = document.querySelector('.collection');
 const noteContentDisplay = document.querySelector('.main-display');
 const exitForm = document.querySelector('#exit-form');
 const formValidation = document.querySelector('#validation-error');
+const editForm = document.querySelector('#edit-entry');
+const editValidation = document.querySelector('#edit-validation-error');
 
 // reads local storage; returns empty array if null.
 function readLocalStorage() {
@@ -39,6 +41,7 @@ function buildLink(linkName) {
   const linkContainer = document.createElement('div');
   const noteLink = document.createElement('a');
   const deleteNote = document.createElement('a');
+  const editNote = document.createElement('a'); //Create edit button element
   noteLink.setAttribute('class', 'collection-item');
   noteLink.setAttribute('href', '#!');
   noteLink.textContent = linkName;
@@ -47,7 +50,11 @@ function buildLink(linkName) {
   deleteNote.textContent = 'Delete';
   deleteNote.style.cssText = 'width: 25%; height: 100%; margin-left: 10px;';
   linkContainer.style.cssText = 'display: flex; align-items: center;';
+  editNote.classList.add('material-icons', 'waves-effect', 'waves-light', 'teal-text', 'text-lighten-3', 'edit-link'); //Add class to = edit button
+  editNote.textContent = 'edit'; //Set it as 'edit' to make it a edit button with Materialize
+  editNote.style.cssText = 'margin-left: 0.5rem'; //Style edit button
   linkContainer.appendChild(noteLink);
+  linkContainer.appendChild(editNote); //Append edit button to link container
   linkContainer.appendChild(deleteNote);
   noteList.appendChild(linkContainer);
 }
@@ -162,6 +169,11 @@ function handleFormSubmit(event) {
   clearForm();
 }
 
+// updates the note in local storage 
+function handleEditSubmit(event){
+  event.preventDefault();
+}
+
 // initiates the form submission from the submit button.
 modalForm.addEventListener('submit', handleFormSubmit);
 
@@ -171,20 +183,51 @@ exitForm.addEventListener('click', clearForm);
 // initiates the load function on page refresh/load.
 window.addEventListener('load', displayLinks);
 
+// submission for edit form
+editForm.addEventListener('submit', handleEditSubmit);
+
 /* 
 1. Deletes the link when the 'delete' button is clicked.
 2. Makes the link active and only shows note content on the page from the corresponding note.
 */
 noteList.addEventListener('click', function (e) {
   if (e.target.classList.contains('delete-link')) {
-      const linkValue = e.target.parentElement.children[0].innerHTML;
-      deleteLink(linkValue);
-      return;
-  } 
+    const linkValue = e.target.parentElement.children[0].innerHTML;
+    deleteLink(linkValue);
+    return;
+  }
   if (e.target.classList.contains('collection-item')) {
     removeActiveClass();
     noteContentDisplay.innerHTML = '';
     displayNoteContent(e.target.innerHTML);
     e.target.classList.add('active');
-  } 
+  }
+  //Edit button event listener
+  if (e.target.classList.contains('edit-link')) {
+    const notes = readLocalStorage();
+
+    const subjectLabel = document.querySelector('label[for="editSubject"]');
+    const textareaLabel = document.querySelector('label[for="edit_note"]');
+    subjectLabel.classList.add('active');
+    textareaLabel.classList.add('active');
+
+    const editSubject = document.querySelector('#editSubject');
+    const editNote = document.querySelector('#edit_note');
+
+    console.log(editNote);
+    
+    for (entry of notes) {
+      if (e.target.parentElement.children[0].innerHTML === entry['subject']) {
+        editSubject.value = entry['subject'];
+        editNote.value = entry['note'];
+      }
+    }
+    
+
+    //opens #modal1 window
+    $(document).ready(function () {
+      $('#edit-modal').modal('open');
+    });
+  }
+
 });
