@@ -6,8 +6,14 @@ const noteList = document.querySelector('.collection');
 const noteContentDisplay = document.querySelector('.main-display');
 const exitForm = document.querySelector('#exit-form');
 const formValidation = document.querySelector('#validation-error');
+
+// queried HTML elements for edit form
 const editForm = document.querySelector('#edit-entry');
+const editSubject = document.querySelector('#editSubject');
+const editNote = document.querySelector('#edit_note');
 const editValidation = document.querySelector('#edit-validation-error');
+let oldSubject = '';
+let oldText = '';
 
 // reads local storage; returns empty array if null.
 function readLocalStorage() {
@@ -112,7 +118,8 @@ function buildContent(noteContent) {
 // checks if form input fields have content; returns user error if missing inner text.
 function validateForm(subject, text) {
   if (subject.value.trim().length === 0 || text.value.trim().length === 0) {
-    formValidation.textContent = 'Please fill our all the fields';
+    formValidation.textContent = 'Please fill out all the fields';
+    editValidation.textContent = 'Please fill out all the fields';
     return false;
   }
   return true;
@@ -132,9 +139,26 @@ function searchNotes(subject) {
   return true;
 }
 
+// validates if edited subject is the same as old subject; check if the new subject is unique.
+function validateEditSubject(subject) {
+  const notes = readLocalStorage();
+  let subjectText = subject.value;
+
+  for (entry of notes) {
+    if (subjectText === oldSubject) {
+      return true;
+    }
+    if (subjectText !== oldSubject && entry['subject'] === subjectText) {
+      editValidation.textContent = `Please enter a unique subject name. Refrain from using ${subjectText}`;
+      return false;
+    }
+  }
+  return true;
+}
 // clears all of the form's input fields (On exit & submit)
 function clearForm() {
   modalForm.reset();
+  editForm.reset();
 }
 
 // form submission events:
@@ -170,8 +194,39 @@ function handleFormSubmit(event) {
 }
 
 // updates the note in local storage 
-function handleEditSubmit(event){
+function handleEditSubmit(event) {
   event.preventDefault();
+
+  //Validate before editing local storage 
+  const subjectValidation = validateEditSubject(editSubject);
+  const validate = validateForm(editSubject, editNote);
+
+  if (!validate || !subjectValidation) {
+    return;
+  }
+
+  editValidation.textContent = '';
+
+  //Update local storage with new note
+  const notes = readLocalStorage();
+
+  for (entry of notes) {
+    if (entry['subject'] === oldSubject) {
+      entry['subject'] = editSubject.value;
+      entry['note'] = editNote.value;
+      localStorage.setItem('notes', JSON.stringify(notes));
+    }
+  }
+
+  noteList.innerHTML = '';
+  displayLinks();
+
+  //closes #edit-modal window
+  $(document).ready(function () {
+    $('#edit-modal').modal('close');
+  });
+  
+  clearForm();
 }
 
 // initiates the form submission from the submit button.
@@ -205,26 +260,24 @@ noteList.addEventListener('click', function (e) {
   //Edit button event listener
   if (e.target.classList.contains('edit-link')) {
     const notes = readLocalStorage();
-
+    //Makes labels active to look cleaner; couldn't do it inline in HTML
     const subjectLabel = document.querySelector('label[for="editSubject"]');
     const textareaLabel = document.querySelector('label[for="edit_note"]');
     subjectLabel.classList.add('active');
     textareaLabel.classList.add('active');
 
-    const editSubject = document.querySelector('#editSubject');
-    const editNote = document.querySelector('#edit_note');
-
-    console.log(editNote);
-    
     for (entry of notes) {
       if (e.target.parentElement.children[0].innerHTML === entry['subject']) {
         editSubject.value = entry['subject'];
         editNote.value = entry['note'];
+        oldSubject = entry['subject'];
+        oldText = entry['note'];
       }
     }
-    
 
-    //opens #modal1 window
+    editValidation.textContent = '';
+
+    //opens #edit-modal window
     $(document).ready(function () {
       $('#edit-modal').modal('open');
     });
