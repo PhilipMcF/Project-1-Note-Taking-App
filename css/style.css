@@ -1,0 +1,42 @@
+/* Custom Stylesheet */
+/**
+ * Use this file to override Materialize files so you can update
+ * the core Materialize files in the future
+ *
+ * Made By MaterializeCSS.com
+ */
+
+.icon-block {
+  padding: 0 15px;
+}
+.icon-block .material-icons {
+	font-size: inherit;
+}
+
+/* Notetaker CSS */
+
+.aside-menu {
+  height: 100vh;
+}
+
+.collection {
+  border: none;
+}
+
+.collection div {
+  margin-bottom: 10px;
+}
+
+.main-display {
+  height: 100vh;
+}
+
+.add-note-button {
+  text-align: end;
+  padding-top: 1em;
+  padding-bottom: 1em;
+}
+
+#note-entry {
+  text-align: center;
+}
