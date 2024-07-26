@@ -96,7 +96,7 @@ function displayNoteContent(searchNote) {
   const notes = readLocalStorage();
   for (entry of notes) {
     if (searchNote === entry['subject']) {
-      buildContent(entry['note']);
+      buildContent(entry['subject'], entry['note']);
     }
   }
 }
@@ -109,9 +109,13 @@ function removeActiveClass() {
 }
 
 // builds the HTML content 
-function buildContent(noteContent) {
+function buildContent(noteSubject, noteContent) {
+  const subjectContainer = document.createElement('h4');
+  subjectContainer.classList.add('center-align');
   const contentContainer = document.createElement('p');
-  contentContainer.textContent = noteContent;
+  subjectContainer.innerText = noteSubject;
+  contentContainer.innerText = noteContent; //changed from textContent to innerText so it properly displays new lines
+  noteContentDisplay.appendChild(subjectContainer);
   noteContentDisplay.appendChild(contentContainer);
 }
 
@@ -219,7 +223,9 @@ function handleEditSubmit(event) {
   }
 
   noteList.innerHTML = '';
-  displayLinks();
+  displayLinks(); //Updates list of notes
+  noteContentDisplay.innerHTML = '';
+  displayNoteContent(editSubject.value); //Updates note content display
 
   //closes #edit-modal window
   $(document).ready(function () {
