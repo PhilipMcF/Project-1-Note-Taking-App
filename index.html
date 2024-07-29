@@ -20,13 +20,13 @@
   <!-- Navigation -->
   <nav>
     <div class="nav-wrapper grey lighten-1">
-      <a href="#" class="brand-logo center">The Note Taking App</a>
+      <a href="#" class="brand-logo center">Notetaker</a>
     </div>
   </nav>
 
   <!-- Main Content-->
-  <div class="row">
-    <div class="col s3 aside-menu teal darken-3">
+  <div class="row main-content">
+    <div class="col s3 teal darken-3">
 
       <!-- Aside List of Notes -->
       <div class="add-note-button">
@@ -126,13 +126,36 @@
       </div>
     </div>
 
-    <div class="col s9 main-display">
-      <!-- Display Note Content Here-->
-
+    <div class="col s9">
+      <!-- Tree Map -->
+      <div class="row">
+        <div class="col s12">
+          <div class="card">
+            <div id="myChart"></div>
+          </div>
+        </div>
+      </div>
+     <!-- Display Note Content Here -->
+     <div class="row">
+      <div class="col s12">
+        <div class="card">
+          <div class="card-content grey lighten-4"">
+            <span class="card-title activator grey-text text-darken-4" id="subject-title">Subject</span>
+          </div>
+          <div class="main-display"></div>
+        </div>
+      </div>
+    </div>
+     
     </div>
   </div>
 
-  <!--  Scripts-->
+  <!-- Scripts -->
+  <!-- Tree Map  -->
+  <script src="https://cdn.jsdelivr.net/npm/ag-charts-enterprise@10.0.2/dist/umd/ag-charts-enterprise.js?t=1721132996319"></script>
+  <script src="./js/data.js"></script>
+  <script src="./js/tree-map.js"></script>
+  <!-- Materialize -->
   <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
   <script src="js/materialize.js"></script>
   <script src="js/init.js"></script>

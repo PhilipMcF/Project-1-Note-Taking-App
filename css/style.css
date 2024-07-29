@@ -6,7 +6,7 @@
  * Made By MaterializeCSS.com
  */
 
-.icon-block {
+ .icon-block {
   padding: 0 15px;
 }
 .icon-block .material-icons {
@@ -15,8 +15,14 @@
 
 /* Notetaker CSS */
 
-.aside-menu {
-  height: 100vh;
+html, 
+body,
+.main-content {
+  min-height: 100vh;
+}
+
+.main-content {
+  display: flex;
 }
 
 .collection {
@@ -27,8 +33,8 @@
   margin-bottom: 10px;
 }
 
-.main-display {
-  height: 100vh;
+.main-display p {
+  padding: 1.5em;
 }
 
 .add-note-button {
