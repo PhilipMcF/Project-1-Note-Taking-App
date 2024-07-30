@@ -6,6 +6,7 @@ const noteList = document.querySelector('.main-collection');
 const noteContentDisplay = document.querySelector('.main-display');
 const exitForm = document.querySelector('#exit-form');
 const formValidation = document.querySelector('#validation-error');
+const cardSubject = document.querySelector('#subject-title');
 
 // queried HTML elements for edit form
 const editForm = document.querySelector('#edit-entry');
@@ -127,13 +128,10 @@ function removeActiveClass() {
 
 // builds the HTML content 
 function buildContent(noteSubject, noteContent) {
-  const subjectContainer = document.createElement('h4');
-  subjectContainer.classList.add('center-align');
   const contentContainer = document.createElement('p');
-  subjectContainer.innerText = noteSubject;
-  contentContainer.innerText = noteContent; //changed from textContent to innerText so it properly displays new lines
-  noteContentDisplay.appendChild(subjectContainer);
+  contentContainer.textContent = noteContent;
   noteContentDisplay.appendChild(contentContainer);
+  cardSubject.textContent = noteSubject;
 }
 
 // checks if form input fields have content; returns user error if missing inner text.
@@ -212,6 +210,7 @@ function handleFormSubmit(event) {
   buildLink(linkName);
 
   clearForm();
+  window.location.reload();
 }
 
 // updates the note in local storage 
@@ -240,9 +239,7 @@ function handleEditSubmit(event) {
   }
 
   noteList.innerHTML = '';
-  displayLinks(); //Updates list of notes
-  noteContentDisplay.innerHTML = '';
-  displayNoteContent(editSubject.value); //Updates note content display
+  displayLinks();
 
   //closes #edit-modal window
   $(document).ready(function () {
@@ -250,6 +247,7 @@ function handleEditSubmit(event) {
   });
   
   clearForm();
+  window.location.reload();
 }
 
 // initiates the form submission from the submit button.
@@ -297,7 +295,6 @@ noteList.addEventListener('click', function (e) {
         oldText = entry['note'];
       }
     }
-
     editValidation.textContent = '';
 
     //opens #edit-modal window
@@ -305,7 +302,6 @@ noteList.addEventListener('click', function (e) {
       $('#edit-modal').modal('open');
     });
   }
-
 });
 
 sidenavContentDisplay.addEventListener('click', function (e) {
