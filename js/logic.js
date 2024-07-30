@@ -1,17 +1,25 @@
 // queried HTML elements.
 const modalForm = document.querySelector('#note-entry');
 const noteSubject = document.querySelector('#subject');
-const noteList = document.querySelector('.collection');
+const noteText = document.querySelector('#write_note');
+const noteList = document.querySelector('.main-collection');
 const noteContentDisplay = document.querySelector('.main-display');
 const exitForm = document.querySelector('#exit-form');
 const formValidation = document.querySelector('#validation-error');
+const cardSubject = document.querySelector('#subject-title');
 
 // queried HTML elements for edit form
 const editForm = document.querySelector('#edit-entry');
 const editSubject = document.querySelector('#editSubject');
+const editNote = document.querySelector('#edit_note');
 const editValidation = document.querySelector('#edit-validation-error');
 let oldSubject = '';
 let oldText = '';
+
+// sidenav HTML elements for generating notelist
+const sidenavNoteContainer = document.querySelector('.sidenav-collection');
+const sidenavContentDisplay = document.querySelector('#sidenav');
+
 
 // reads local storage; returns empty array if null.
 function readLocalStorage() {
@@ -23,7 +31,7 @@ function readLocalStorage() {
 function createNoteEntry(subject, text) {
   let noteEntry = {
     subject: subject.value,
-    note: text,
+    note: text.value,
   };
   return noteEntry;
 }
@@ -49,11 +57,11 @@ function buildLink(linkName) {
   noteLink.setAttribute('class', 'collection-item');
   noteLink.setAttribute('href', '#!');
   noteLink.textContent = linkName;
-  noteLink.style.cssText = 'width: 60%';
-  deleteNote.classList.add('waves-effect', 'waves-light', 'btn-small', 'delete-link');
-  deleteNote.textContent = 'Delete';
-  deleteNote.style.cssText = 'width: 25%; height: 100%; margin-left: 10px;';
-  linkContainer.style.cssText = 'display: flex; align-items: center;';
+  noteLink.style.cssText = 'width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis';
+  deleteNote.classList.add('material-icons', 'waves-effect', 'waves-light', 'delete-link');
+  deleteNote.textContent = 'delete';
+  deleteNote.style.cssText = ' height: 100%; margin-left: 10px; color: orange;';
+  linkContainer.style.cssText = 'display: flex; align-items: center; text-overflow: ellipsis';
   editNote.classList.add('material-icons', 'waves-effect', 'waves-light', 'teal-text', 'text-lighten-3', 'edit-link'); //Add class to = edit button
   editNote.textContent = 'edit'; //Set it as 'edit' to make it a edit button with Materialize
   editNote.style.cssText = 'margin-left: 0.5rem'; //Style edit button
@@ -61,6 +69,14 @@ function buildLink(linkName) {
   linkContainer.appendChild(editNote); //Append edit button to link container
   linkContainer.appendChild(deleteNote);
   noteList.appendChild(linkContainer);
+
+  // // maybe can try a foreach in the future...
+  // noteList.forEach( (note) => {
+  //   note.appendChild(linkContainer);
+  // })
+
+  const sidenavLinkContainer = linkContainer.cloneNode(true);
+  sidenavNoteContainer.appendChild(sidenavLinkContainer);
 }
 
 // searches local storage for 'searchValue' note to delete. functions is tied to the delete button.
@@ -104,22 +120,23 @@ function removeActiveClass() {
   noteList.querySelectorAll('a').forEach(function (el) {
     el.classList.remove('active');
   });
+
+  sidenavNoteContainer.querySelectorAll('a').forEach(function (el) {
+    el.classList.remove('active');
+  });
 }
 
 // builds the HTML content 
 function buildContent(noteSubject, noteContent) {
-  const subjectContainer = document.createElement('h4');
-  subjectContainer.classList.add('center-align');
   const contentContainer = document.createElement('p');
-  subjectContainer.innerText = noteSubject;
-  contentContainer.innerHTML = noteContent; //changed from textContent to innerText so it properly displays new lines
-  noteContentDisplay.appendChild(subjectContainer);
+  contentContainer.textContent = noteContent;
   noteContentDisplay.appendChild(contentContainer);
+  cardSubject.textContent = noteSubject;
 }
 
 // checks if form input fields have content; returns user error if missing inner text.
 function validateForm(subject, text) {
-  if (subject.value.trim().length === 0 || text.trim().length === 0) {
+  if (subject.value.trim().length === 0 || text.value.trim().length === 0) {
     formValidation.textContent = 'Please fill out all the fields';
     editValidation.textContent = 'Please fill out all the fields';
     return false;
@@ -176,9 +193,9 @@ function clearForm() {
 */
 function handleFormSubmit(event) {
   event.preventDefault();
-  let editorNote = addNoteEditor.getSemanticHTML();
+
   const subjectValidation = searchNotes(noteSubject);
-  const validate = validateForm(noteSubject, editorNote);
+  const validate = validateForm(noteSubject, noteText);
 
   if (!validate || !subjectValidation) {
     return;
@@ -186,21 +203,20 @@ function handleFormSubmit(event) {
 
   formValidation.textContent = '';
 
-  const entry = createNoteEntry(noteSubject, editorNote);
+  const entry = createNoteEntry(noteSubject, noteText);
   addLocalStorageNote(entry);
 
   linkName = noteSubject.value;
   buildLink(linkName);
 
   clearForm();
-  addNoteEditor.setContents([{ insert: '\n' }]);
+  window.location.reload();
 }
 
 // updates the note in local storage 
 function handleEditSubmit(event) {
   event.preventDefault();
 
-  let editNote = editNoteEditor.getSemanticHTML();
   //Validate before editing local storage 
   const subjectValidation = validateEditSubject(editSubject);
   const validate = validateForm(editSubject, editNote);
@@ -217,22 +233,21 @@ function handleEditSubmit(event) {
   for (entry of notes) {
     if (entry['subject'] === oldSubject) {
       entry['subject'] = editSubject.value;
-      entry['note'] = editNote;
+      entry['note'] = editNote.value;
       localStorage.setItem('notes', JSON.stringify(notes));
     }
   }
 
   noteList.innerHTML = '';
-  displayLinks(); //Updates list of notes
-  noteContentDisplay.innerHTML = '';
-  displayNoteContent(editSubject.value); //Updates note content display
+  displayLinks();
 
   //closes #edit-modal window
   $(document).ready(function () {
     $('#edit-modal').modal('close');
   });
-
+  
   clearForm();
+  window.location.reload();
 }
 
 // initiates the form submission from the submit button.
@@ -270,13 +285,52 @@ noteList.addEventListener('click', function (e) {
     const subjectLabel = document.querySelector('label[for="editSubject"]');
     const textareaLabel = document.querySelector('label[for="edit_note"]');
     subjectLabel.classList.add('active');
-    // textareaLabel.classList.add('active');
+    textareaLabel.classList.add('active');
 
     for (entry of notes) {
       if (e.target.parentElement.children[0].innerHTML === entry['subject']) {
         editSubject.value = entry['subject'];
-        editNoteEditor.root.innerHTML = entry['note'];
+        editNote.value = entry['note'];
         oldSubject = entry['subject'];
+        oldText = entry['note'];
+      }
+    }
+    editValidation.textContent = '';
+
+    //opens #edit-modal window
+    $(document).ready(function () {
+      $('#edit-modal').modal('open');
+    });
+  }
+});
+
+sidenavContentDisplay.addEventListener('click', function (e) {
+  if (e.target.classList.contains('delete-link')) {
+    const linkValue = e.target.parentElement.children[0].innerHTML;
+    deleteLink(linkValue);
+    return;
+  }
+  if (e.target.classList.contains('collection-item')) {
+    removeActiveClass();
+    noteContentDisplay.innerHTML = '';
+    displayNoteContent(e.target.innerHTML);
+    e.target.classList.add('active');
+  }
+  //Edit button event listener
+  if (e.target.classList.contains('edit-link')) {
+    const notes = readLocalStorage();
+    //Makes labels active to look cleaner; couldn't do it inline in HTML
+    const subjectLabel = document.querySelector('label[for="editSubject"]');
+    const textareaLabel = document.querySelector('label[for="edit_note"]');
+    subjectLabel.classList.add('active');
+    textareaLabel.classList.add('active');
+
+    for (entry of notes) {
+      if (e.target.parentElement.children[0].innerHTML === entry['subject']) {
+        editSubject.value = entry['subject'];
+        editNote.value = entry['note'];
+        oldSubject = entry['subject'];
+        oldText = entry['note'];
       }
     }
 
