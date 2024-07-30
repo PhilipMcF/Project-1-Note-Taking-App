@@ -27,6 +27,14 @@
   margin-bottom: 10px;
 }
 
+.sidenav-collection {
+  margin: 0 10px;
+}
+
+#sidenav-hamburger {
+  font-size: 40px;
+}
+
 .main-display {
   height: 100vh;
 }
@@ -37,6 +45,12 @@
   padding-bottom: 1em;
 }
 
+.sidenav .add-note-button {
+  padding: 1em;
+}
+
 #note-entry {
   text-align: center;
 }
+
+/** Add media query for center logo

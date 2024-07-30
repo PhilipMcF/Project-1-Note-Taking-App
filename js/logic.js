@@ -2,7 +2,7 @@
 const modalForm = document.querySelector('#note-entry');
 const noteSubject = document.querySelector('#subject');
 const noteText = document.querySelector('#write_note');
-const noteList = document.querySelector('.collection');
+const noteList = document.querySelector('.main-collection');
 const noteContentDisplay = document.querySelector('.main-display');
 const exitForm = document.querySelector('#exit-form');
 const formValidation = document.querySelector('#validation-error');
@@ -14,6 +14,11 @@ const editNote = document.querySelector('#edit_note');
 const editValidation = document.querySelector('#edit-validation-error');
 let oldSubject = '';
 let oldText = '';
+
+// sidenav HTML elements for generating notelist
+const sidenavNoteContainer = document.querySelector('.sidenav-collection');
+const sidenavContentDisplay = document.querySelector('#sidenav');
+
 
 // reads local storage; returns empty array if null.
 function readLocalStorage() {
@@ -51,11 +56,11 @@ function buildLink(linkName) {
   noteLink.setAttribute('class', 'collection-item');
   noteLink.setAttribute('href', '#!');
   noteLink.textContent = linkName;
-  noteLink.style.cssText = 'width: 70%';
-  deleteNote.classList.add('waves-effect', 'waves-light', 'btn-small', 'delete-link');
-  deleteNote.textContent = 'Delete';
-  deleteNote.style.cssText = 'width: 25%; height: 100%; margin-left: 10px;';
-  linkContainer.style.cssText = 'display: flex; align-items: center;';
+  noteLink.style.cssText = 'width: 70%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis';
+  deleteNote.classList.add('material-icons', 'waves-effect', 'waves-light', 'delete-link');
+  deleteNote.textContent = 'delete';
+  deleteNote.style.cssText = ' height: 100%; margin-left: 10px; color: orange;';
+  linkContainer.style.cssText = 'display: flex; align-items: center; text-overflow: ellipsis';
   editNote.classList.add('material-icons', 'waves-effect', 'waves-light', 'teal-text', 'text-lighten-3', 'edit-link'); //Add class to = edit button
   editNote.textContent = 'edit'; //Set it as 'edit' to make it a edit button with Materialize
   editNote.style.cssText = 'margin-left: 0.5rem'; //Style edit button
@@ -63,6 +68,14 @@ function buildLink(linkName) {
   linkContainer.appendChild(editNote); //Append edit button to link container
   linkContainer.appendChild(deleteNote);
   noteList.appendChild(linkContainer);
+
+  // // maybe can try a foreach in the future...
+  // noteList.forEach( (note) => {
+  //   note.appendChild(linkContainer);
+  // })
+
+  const sidenavLinkContainer = linkContainer.cloneNode(true);
+  sidenavNoteContainer.appendChild(sidenavLinkContainer);
 }
 
 // searches local storage for 'searchValue' note to delete. functions is tied to the delete button.
@@ -104,6 +117,10 @@ function displayNoteContent(searchNote) {
 // searches all links in the aside and removes the 'active' class from each element.
 function removeActiveClass() {
   noteList.querySelectorAll('a').forEach(function (el) {
+    el.classList.remove('active');
+  });
+
+  sidenavNoteContainer.querySelectorAll('a').forEach(function (el) {
     el.classList.remove('active');
   });
 }
@@ -252,6 +269,46 @@ editForm.addEventListener('submit', handleEditSubmit);
 2. Makes the link active and only shows note content on the page from the corresponding note.
 */
 noteList.addEventListener('click', function (e) {
+  if (e.target.classList.contains('delete-link')) {
+    const linkValue = e.target.parentElement.children[0].innerHTML;
+    deleteLink(linkValue);
+    return;
+  }
+  if (e.target.classList.contains('collection-item')) {
+    removeActiveClass();
+    noteContentDisplay.innerHTML = '';
+    displayNoteContent(e.target.innerHTML);
+    e.target.classList.add('active');
+  }
+  //Edit button event listener
+  if (e.target.classList.contains('edit-link')) {
+    const notes = readLocalStorage();
+    //Makes labels active to look cleaner; couldn't do it inline in HTML
+    const subjectLabel = document.querySelector('label[for="editSubject"]');
+    const textareaLabel = document.querySelector('label[for="edit_note"]');
+    subjectLabel.classList.add('active');
+    textareaLabel.classList.add('active');
+
+    for (entry of notes) {
+      if (e.target.parentElement.children[0].innerHTML === entry['subject']) {
+        editSubject.value = entry['subject'];
+        editNote.value = entry['note'];
+        oldSubject = entry['subject'];
+        oldText = entry['note'];
+      }
+    }
+
+    editValidation.textContent = '';
+
+    //opens #edit-modal window
+    $(document).ready(function () {
+      $('#edit-modal').modal('open');
+    });
+  }
+
+});
+
+sidenavContentDisplay.addEventListener('click', function (e) {
   if (e.target.classList.contains('delete-link')) {
     const linkValue = e.target.parentElement.children[0].innerHTML;
     deleteLink(linkValue);
