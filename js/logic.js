@@ -1,7 +1,6 @@
 // queried HTML elements.
 const modalForm = document.querySelector('#note-entry');
 const noteSubject = document.querySelector('#subject');
-const noteText = document.querySelector('#write_note');
 const noteList = document.querySelector('.main-collection');
 const noteContentDisplay = document.querySelector('.main-display');
 const exitForm = document.querySelector('#exit-form');
@@ -11,10 +10,8 @@ const cardSubject = document.querySelector('#subject-title');
 // queried HTML elements for edit form
 const editForm = document.querySelector('#edit-entry');
 const editSubject = document.querySelector('#editSubject');
-const editNote = document.querySelector('#edit_note');
 const editValidation = document.querySelector('#edit-validation-error');
 let oldSubject = '';
-let oldText = '';
 
 // sidenav HTML elements for generating notelist
 const sidenavNoteContainer = document.querySelector('.sidenav-collection');
@@ -31,7 +28,7 @@ function readLocalStorage() {
 function createNoteEntry(subject, text) {
   let noteEntry = {
     subject: subject.value,
-    note: text.value,
+    note: text,
   };
   return noteEntry;
 }
@@ -128,15 +125,19 @@ function removeActiveClass() {
 
 // builds the HTML content 
 function buildContent(noteSubject, noteContent) {
-  const contentContainer = document.createElement('p');
-  contentContainer.textContent = noteContent;
-  noteContentDisplay.appendChild(contentContainer);
+  // const contentContainer = document.createElement('p');
+  // contentContainer.innerHTML = noteContent;
+  // noteContentDisplay.appendChild(contentContainer);
+  // cardSubject.textContent = noteSubject;
+  editNoteEditor.setContents(noteContent);
+  noteContentDisplay.innerHTML = editNoteEditor.root.innerHTML;
   cardSubject.textContent = noteSubject;
+  console.log(noteContent);
 }
 
 // checks if form input fields have content; returns user error if missing inner text.
 function validateForm(subject, text) {
-  if (subject.value.trim().length === 0 || text.value.trim().length === 0) {
+  if (subject.value.trim().length === 0 || text.trim().length === 0) {
     formValidation.textContent = 'Please fill out all the fields';
     editValidation.textContent = 'Please fill out all the fields';
     return false;
@@ -193,9 +194,11 @@ function clearForm() {
 */
 function handleFormSubmit(event) {
   event.preventDefault();
-
+  // let editNote = addNoteEditor.getSemanticHTML();
+  let editNote = addNoteEditor.getContents();
+  let editNoteText = addNoteEditor.getText();
   const subjectValidation = searchNotes(noteSubject);
-  const validate = validateForm(noteSubject, noteText);
+  const validate = validateForm(noteSubject, editNoteText);
 
   if (!validate || !subjectValidation) {
     return;
@@ -203,13 +206,14 @@ function handleFormSubmit(event) {
 
   formValidation.textContent = '';
 
-  const entry = createNoteEntry(noteSubject, noteText);
+  const entry = createNoteEntry(noteSubject, editNote);
   addLocalStorageNote(entry);
 
   linkName = noteSubject.value;
   buildLink(linkName);
 
   clearForm();
+  addNoteEditor.setContents([{ insert: '\n' }]);
   window.location.reload();
 }
 
@@ -217,9 +221,11 @@ function handleFormSubmit(event) {
 function handleEditSubmit(event) {
   event.preventDefault();
 
+  let editNote = editNoteEditor.getContents();
+  let editNoteText = editNoteEditor.getText();
   //Validate before editing local storage 
   const subjectValidation = validateEditSubject(editSubject);
-  const validate = validateForm(editSubject, editNote);
+  const validate = validateForm(editSubject, editNoteText);
 
   if (!validate || !subjectValidation) {
     return;
@@ -233,19 +239,21 @@ function handleEditSubmit(event) {
   for (entry of notes) {
     if (entry['subject'] === oldSubject) {
       entry['subject'] = editSubject.value;
-      entry['note'] = editNote.value;
+      entry['note'] = editNote;
       localStorage.setItem('notes', JSON.stringify(notes));
     }
   }
 
   noteList.innerHTML = '';
   displayLinks();
+  noteContentDisplay.innerHTML = '';
+  displayNoteContent(editSubject.value);
 
   //closes #edit-modal window
   $(document).ready(function () {
     $('#edit-modal').modal('close');
   });
-  
+
   clearForm();
   window.location.reload();
 }
@@ -283,16 +291,15 @@ noteList.addEventListener('click', function (e) {
     const notes = readLocalStorage();
     //Makes labels active to look cleaner; couldn't do it inline in HTML
     const subjectLabel = document.querySelector('label[for="editSubject"]');
-    const textareaLabel = document.querySelector('label[for="edit_note"]');
+    // const textareaLabel = document.querySelector('label[for="edit_note"]');
     subjectLabel.classList.add('active');
-    textareaLabel.classList.add('active');
+    // textareaLabel.classList.add('active');
 
     for (entry of notes) {
       if (e.target.parentElement.children[0].innerHTML === entry['subject']) {
         editSubject.value = entry['subject'];
-        editNote.value = entry['note'];
+        editNoteEditor.setContents(entry['note']);
         oldSubject = entry['subject'];
-        oldText = entry['note'];
       }
     }
     editValidation.textContent = '';
@@ -321,16 +328,15 @@ sidenavContentDisplay.addEventListener('click', function (e) {
     const notes = readLocalStorage();
     //Makes labels active to look cleaner; couldn't do it inline in HTML
     const subjectLabel = document.querySelector('label[for="editSubject"]');
-    const textareaLabel = document.querySelector('label[for="edit_note"]');
+    // const textareaLabel = document.querySelector('label[for="edit_note"]');
     subjectLabel.classList.add('active');
-    textareaLabel.classList.add('active');
+    // textareaLabel.classList.add('active');
 
     for (entry of notes) {
       if (e.target.parentElement.children[0].innerHTML === entry['subject']) {
         editSubject.value = entry['subject'];
-        editNote.value = entry['note'];
+        editNoteEditor.setContents(entry['note']);
         oldSubject = entry['subject'];
-        oldText = entry['note'];
       }
     }
 
