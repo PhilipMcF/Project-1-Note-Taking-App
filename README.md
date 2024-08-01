@@ -72,4 +72,11 @@ Philip McFarland - philipsm1998@gmail.com - https://github.com/PhilipMcF
 Project Link - https://github.com/PhilipMcF/Project-1-Note-Taking-App
 
 ## Acknowledgments 
-
+* [Quill Text Editor](https://quilljs.com/docs/api)
+* [AG Charts](https://charts.ag-grid.com/gallery/simple-treemap/)
+* [Materialize CSS Modals](https://materializecss.com/modals.html#!)
+* [Materialize CSS Sidenav](https://materializecss.com/sidenav.html)
+* [Materialize CSS Colors](https://materializecss.com/color.html)
+* [Materialize CSS Cards](https://materializecss.com/cards.html)
+* [Materialize CSS Buttons](https://materializecss.com/buttons.html)
+* [MDN localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)
