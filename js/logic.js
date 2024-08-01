@@ -1,4 +1,4 @@
-// queried HTML elements.
+// queried HTML elements
 const modalForm = document.querySelector('#note-entry');
 const noteSubject = document.querySelector('#subject');
 const noteList = document.querySelector('.main-collection');
@@ -13,12 +13,12 @@ const editSubject = document.querySelector('#editSubject');
 const editValidation = document.querySelector('#edit-validation-error');
 let oldSubject = '';
 
-// sidenav HTML elements for generating notelist
+// sidenav HTML elements for generating 'notelist' 
 const sidenavNoteContainer = document.querySelector('.sidenav-collection');
 const sidenavContentDisplay = document.querySelector('#sidenav');
 
 
-// reads local storage; returns empty array if null.
+// reads local storage; returns empty array if null
 function readLocalStorage() {
   const data = localStorage.getItem('notes');
   return data ? JSON.parse(data) : [];
@@ -33,7 +33,7 @@ function createNoteEntry(subject, text) {
   return noteEntry;
 }
 
-// adds object to local storage; if item exists, pushes object to array; else, creates an object in an array. 
+// adds object to local storage; if item exists, pushes object to array; else, creates an object in an array 
 function addLocalStorageNote(obj) {
   let notes = readLocalStorage();
   if (notes) {
@@ -45,12 +45,12 @@ function addLocalStorageNote(obj) {
   }
 }
 
-// builds parent div, note link and corresponding delete button.
+// builds parent div, note link and corresponding delete button
 function buildLink(linkName) {
   const linkContainer = document.createElement('div');
   const noteLink = document.createElement('a');
   const deleteNote = document.createElement('a');
-  const editNote = document.createElement('a'); //Create edit button element
+  const editNote = document.createElement('a'); // create edit button element
   noteLink.setAttribute('class', 'collection-item');
   noteLink.setAttribute('href', '#!');
   noteLink.textContent = linkName;
@@ -59,24 +59,18 @@ function buildLink(linkName) {
   deleteNote.textContent = 'delete';
   deleteNote.style.cssText = ' height: 100%; margin-left: 10px; color: orange;';
   linkContainer.style.cssText = 'display: flex; align-items: center; text-overflow: ellipsis';
-  editNote.classList.add('material-icons', 'waves-effect', 'waves-light', 'teal-text', 'text-lighten-3', 'edit-link'); //Add class to = edit button
-  editNote.textContent = 'edit'; //Set it as 'edit' to make it a edit button with Materialize
-  editNote.style.cssText = 'margin-left: 0.5rem'; //Style edit button
+  editNote.classList.add('material-icons', 'waves-effect', 'waves-light', 'teal-text', 'text-lighten-3', 'edit-link'); // add class to = edit button
+  editNote.textContent = 'edit'; // set it as 'edit' to make it a edit button with Materialize
+  editNote.style.cssText = 'margin-left: 0.5rem'; // style edit button
   linkContainer.appendChild(noteLink);
-  linkContainer.appendChild(editNote); //Append edit button to link container
+  linkContainer.appendChild(editNote); // append edit button to link container
   linkContainer.appendChild(deleteNote);
   noteList.appendChild(linkContainer);
-
-  // // maybe can try a foreach in the future...
-  // noteList.forEach( (note) => {
-  //   note.appendChild(linkContainer);
-  // })
-
   const sidenavLinkContainer = linkContainer.cloneNode(true);
   sidenavNoteContainer.appendChild(sidenavLinkContainer);
 }
 
-// searches local storage for 'searchValue' note to delete. functions is tied to the delete button.
+// searches local storage for 'searchValue' note to delete. functions is tied to the delete button
 function deleteLink(searchValue) {
   let notes = readLocalStorage();
 
@@ -94,7 +88,7 @@ function deleteLink(searchValue) {
   window.location.reload();
 }
 
-// displays all note links on window load.
+// displays all note links on window load
 function displayLinks() {
   const notes = readLocalStorage();
   for (entry of notes) {
@@ -102,7 +96,7 @@ function displayLinks() {
   }
 }
 
-// iterates through local storage and builds display content for the main content area.
+// iterates through local storage and builds display content for the main content area
 function displayNoteContent(searchNote) {
   const notes = readLocalStorage();
   for (entry of notes) {
@@ -112,7 +106,7 @@ function displayNoteContent(searchNote) {
   }
 }
 
-// searches all links in the aside and removes the 'active' class from each element.
+// searches all links in the aside and removes the 'active' class from each element
 function removeActiveClass() {
   noteList.querySelectorAll('a').forEach(function (el) {
     el.classList.remove('active');
@@ -125,17 +119,13 @@ function removeActiveClass() {
 
 // builds the HTML content 
 function buildContent(noteSubject, noteContent) {
-  // const contentContainer = document.createElement('p');
-  // contentContainer.innerHTML = noteContent;
-  // noteContentDisplay.appendChild(contentContainer);
-  // cardSubject.textContent = noteSubject;
   editNoteEditor.setContents(noteContent);
   noteContentDisplay.innerHTML = editNoteEditor.root.innerHTML;
   cardSubject.textContent = noteSubject;
   console.log(noteContent);
 }
 
-// checks if form input fields have content; returns user error if missing inner text.
+// checks if form input fields have content; returns user error if missing inner text
 function validateForm(subject, text) {
   if (subject.value.trim().length === 0 || text.trim().length === 0) {
     formValidation.textContent = 'Please fill out all the fields';
@@ -145,7 +135,7 @@ function validateForm(subject, text) {
   return true;
 }
 
-// validates if the user entered subject is unique to local storage. if not unique, an error message is displayed, a unique subject must then be entered.
+// validates if the user entered subject is unique to local storage. if not unique, an error message is displayed, a unique subject must then be entered
 function searchNotes(subject) {
   const notes = readLocalStorage();
   let subjectText = subject.value;
@@ -159,7 +149,7 @@ function searchNotes(subject) {
   return true;
 }
 
-// validates if edited subject is the same as old subject; check if the new subject is unique.
+// validates if edited subject is the same as old subject; check if the new subject is unique
 function validateEditSubject(subject) {
   const notes = readLocalStorage();
   let subjectText = subject.value;
@@ -192,9 +182,9 @@ function clearForm() {
 7. Capture the link name and build the content to display on the page.
 8. Clear form input fields.
 */
+
 function handleFormSubmit(event) {
   event.preventDefault();
-  // let editNote = addNoteEditor.getSemanticHTML();
   let editNote = addNoteEditor.getContents();
   let editNoteText = addNoteEditor.getText();
   const subjectValidation = searchNotes(noteSubject);
@@ -223,7 +213,7 @@ function handleEditSubmit(event) {
 
   let editNote = editNoteEditor.getContents();
   let editNoteText = editNoteEditor.getText();
-  //Validate before editing local storage 
+  // validate before editing local storage 
   const subjectValidation = validateEditSubject(editSubject);
   const validate = validateForm(editSubject, editNoteText);
 
@@ -233,7 +223,7 @@ function handleEditSubmit(event) {
 
   editValidation.textContent = '';
 
-  //Update local storage with new note
+  // update local storage with new note
   const notes = readLocalStorage();
 
   for (entry of notes) {
@@ -249,7 +239,7 @@ function handleEditSubmit(event) {
   noteContentDisplay.innerHTML = '';
   displayNoteContent(editSubject.value);
 
-  //closes #edit-modal window
+  // closes #edit-modal window
   $(document).ready(function () {
     $('#edit-modal').modal('close');
   });
@@ -258,13 +248,13 @@ function handleEditSubmit(event) {
   window.location.reload();
 }
 
-// initiates the form submission from the submit button.
+// initiates the form submission from the submit button
 modalForm.addEventListener('submit', handleFormSubmit);
 
-// clears the form input fields and hides the modal window.
+// clears the form input fields and hides the modal window
 exitForm.addEventListener('click', clearForm);
 
-// initiates the load function on page refresh/load.
+// initiates the load function on page refresh/load
 window.addEventListener('load', displayLinks);
 
 // submission for edit form
@@ -286,10 +276,9 @@ noteList.addEventListener('click', function (e) {
     displayNoteContent(e.target.innerHTML);
     e.target.classList.add('active');
   }
-  //Edit button event listener
+  // edit button event listener
   if (e.target.classList.contains('edit-link')) {
     const notes = readLocalStorage();
-    //Makes labels active to look cleaner; couldn't do it inline in HTML
     const subjectLabel = document.querySelector('label[for="editSubject"]');
     // const textareaLabel = document.querySelector('label[for="edit_note"]');
     subjectLabel.classList.add('active');
@@ -304,7 +293,7 @@ noteList.addEventListener('click', function (e) {
     }
     editValidation.textContent = '';
 
-    //opens #edit-modal window
+    // opens #edit-modal window
     $(document).ready(function () {
       $('#edit-modal').modal('open');
     });
@@ -323,10 +312,10 @@ sidenavContentDisplay.addEventListener('click', function (e) {
     displayNoteContent(e.target.innerHTML);
     e.target.classList.add('active');
   }
-  //Edit button event listener
+  // edit button event listener
   if (e.target.classList.contains('edit-link')) {
     const notes = readLocalStorage();
-    //Makes labels active to look cleaner; couldn't do it inline in HTML
+    // makes labels active to look cleaner; couldn't do it inline in HTML
     const subjectLabel = document.querySelector('label[for="editSubject"]');
     // const textareaLabel = document.querySelector('label[for="edit_note"]');
     subjectLabel.classList.add('active');
@@ -342,10 +331,9 @@ sidenavContentDisplay.addEventListener('click', function (e) {
 
     editValidation.textContent = '';
 
-    //opens #edit-modal window
+    // opens #edit-modal window
     $(document).ready(function () {
       $('#edit-modal').modal('open');
     });
   }
-
 });
