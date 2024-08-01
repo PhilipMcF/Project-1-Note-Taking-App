@@ -201,14 +201,8 @@
   <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
   <!-- Initialize Quill editor -->
   <script>
-    //this import/registering doesn't even seem to work 
-    let ColorClass = Quill.import('attributors/class/color');
-    let SizeStyle = Quill.import('attributors/style/size');
-    Quill.register(ColorClass, true);
-    Quill.register(SizeStyle, true);
-
     const toolbarOptions = [
-      [{ 'header': [1, 2, 3, 4, 5, 6, false] }],        // custom dropdown
+      [{ 'header': [1, 2, 3, 4, 5, 6, false] }], // Custom dropdown
 
         ["bold", "italic", "underline", "strike"], // Toggled buttons
         ["blockquote", "code-block"],
