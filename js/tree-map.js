@@ -1,3 +1,5 @@
+// AG Charts Treemap configuration code. function 'selectRandomColor' generates a random fill/stroke color for the chart
+
 const { AgCharts } = agCharts;
 
 const formatter = new Intl.NumberFormat("en-US", {

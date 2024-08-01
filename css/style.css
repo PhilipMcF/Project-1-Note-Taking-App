@@ -15,6 +15,7 @@
 
 /* Notetaker CSS */
 
+/* Setting the base document elements to adjust for changes in content */
 html, 
 body,
 .main-content {
@@ -25,6 +26,7 @@ body,
   display: flex;
 }
 
+/* CSS related to the aside/sidenav */
 .collection {
   border: none;
 }
@@ -41,14 +43,6 @@ body,
   font-size: 40px;
 }
 
-/* .main-display {
-  height: 100vh;
-} */
-
-.main-display p {
-  padding: 1.5em;
-}
-
 .add-note-button {
   text-align: end;
   padding-top: 1em;
@@ -59,8 +53,13 @@ body,
   padding: 1em;
 }
 
+/* Format for the form elements */
 #note-entry {
   text-align: center;
 }
 
-/** Add media query for center logo
+/* Formatting for the note text content */
+.main-display p {
+  padding: 1.5em;
+}
+

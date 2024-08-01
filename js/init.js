@@ -1,7 +1,7 @@
-(function($){
-  $(function(){
+// Function to display the sidenav menu in mobile view ports
 
-    $('.sidenav').sidenav();
-
-  }); // end of document ready
-})(jQuery); // end of jQuery name space
+(function ($) {
+  $(function () {
+    $(".sidenav").sidenav();
+  }); // End of document ready
+})(jQuery); // End of jQuery name space
