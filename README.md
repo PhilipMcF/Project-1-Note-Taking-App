@@ -63,7 +63,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
 ## Contact 
-William Schultz - linkedinwill23@gmail.com - https://github.com/ws-data-engineering
+William Schultz - ws.data.engineering@gmail.com - https://github.com/ws-data-engineering
 
 Olyad Kitila - olyad987@gmail.com - https://github.com/thymetime
 
